@@ -1,35 +1,24 @@
 const express = require("express");
 const cors = require("cors");
-const dotenv = require("dotenv").config();
-const db = require("./config/db");
+require("dotenv").config();
+
 const errorHandler = require("./middleware/errorHandler");
+const contactRoutes = require("./routes/contactRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-app.use(cors());              // ✅ allow all origins
-app.use(express.json());      // ✅ parse JSON
 
-
+// Middlewares
+app.use(cors());
 app.use(express.json());
 
+// Routes
+app.use("/api/contacts", contactRoutes);
 
-app.use("/api/contacts", require("./routes/contactRoutes"));
-
-
+// Error handler
 app.use(errorHandler);
 
-
-(async () => {
-  try {
-    const connection = await db.getConnection();
-    console.log("MySQL connected successfully");
-    connection.release();
-
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
-  } catch (error) {
-    console.error("MySQL connection failed:", error.message);
-    process.exit(1);
-  }
-})();
+// Start server (NO DB CONNECTION CHECK FOR FIRESTORE)
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

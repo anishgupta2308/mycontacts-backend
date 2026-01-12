@@ -1,20 +1,17 @@
-const db = require("../config/db");
-
-
-// const getAllContacts = async () => {
-//   const [rows] = await db.execute("SELECT * FROM contacts");
-//   return rows;
-// };
-
+const db = require("../config/firebase");
 
 const insertContact = async ({ firstname, lastname, email, phone }) => {
-  await db.execute(
-    "INSERT INTO contacts (firstname, lastname, email, phone) VALUES (?, ?, ?, ?)",
-    [firstname, lastname, email, phone]
-  );
+  const docRef = await db.collection("contacts").add({
+    firstname,
+    lastname,
+    email,
+    phone,
+    createdAt: new Date(),
+  });
+
+  return docRef.id;
 };
 
 module.exports = {
-  // getAllContacts,
-  insertContact
+  insertContact,
 };
